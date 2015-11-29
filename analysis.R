@@ -18,12 +18,11 @@ for (f in filelist) {
 	dat[[f]] <- tmp
 }
 dat <- do.call("rbind", dat)
-dat <- subset(dat, year >= 1981)
+
 ### Within each year, calculate total number of points won by each national team
 country.df <- dat %>% 
 	group_by(year, winner_ioc) %>%
-	summarize(NatPtsWon = length(winner_ioc),
-		BestLevel = max(level))
+	summarize(NatPtsWon = length(winner_ioc))
 ### Within each year, calculate total number of points won by each player
 player.df <- dat %>% 
 	group_by(year, winner_ioc, winner_name, winner_id) %>%
@@ -43,6 +42,9 @@ winners <- subset(winners, !is.na(NatPtsWon))
 winners <- winners %>%
 	group_by(year, winner_ioc) %>% 
 	filter(PlayerContrib == max(PlayerContrib))
-winners <- winners[order(-1 * winners$PlayerContrib),]
+winners <- winners[order(winners$PlayerContrib),]
 
-dotchart(winners, 
+with(tail(winners, 15),
+	dotchart(PlayerContrib,
+	labels = paste0(winner_name, " (",winner_ioc,", ", year, ")"),
+	pch = 19))
