@@ -48,21 +48,25 @@ winners <- winners %>%
 	filter(PlayerContrib == max(PlayerContrib))
 winners <- winners[order(winners$PlayerContrib),]
 
+### All the rest is output
+### First, a dotchart
+
 with(tail(winners, 15),
 	dotchart(PlayerContrib,
 	labels = paste0(winner_name, " (",winner_ioc,", ", year, ")"),
 	pch = 19))
 
+### Second, a table
+### in pandoc-flavoured markdown
 winners <- winners[order(winners$PlayerContrib * -1),]
 plot.df <- head(winners, 12)
 
 plot.df$Team <- paste0(plot.df$winner_ioc, " (", plot.df$year, ")")
 plot.df <- plot.df[,c("Team","NatPtsWon","winner_name","PlayerPtsWon","PlayerContrib")]
 plot.df$PlayerContrib <- plot.df$PlayerContrib * 100
+
 print(ascii(plot.df, 
 	digits = 0,
 	colnames = c("Team","Singles points won (team)",
 	"Player","Singles points won (player)","Contribution (%)")), 
 	type = "pandoc", digits = 0)
-
-
